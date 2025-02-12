@@ -1,0 +1,1 @@
+docker run -it --rm -v ./workspace:/root/ros_ws osrf/ros:jazzy-desktop
