@@ -15,6 +15,8 @@ RUN apt install -y \
 RUN apt install dbus-x11
 # Install net-tools for debugging
 RUN apt install -y net-tools
+# Install rqt
+RUN apt install '~nros-jazzy-rqt*' -y
 # And clean up
 RUN apt clean && rm -rf /var/lib/apt/lists/*
 
