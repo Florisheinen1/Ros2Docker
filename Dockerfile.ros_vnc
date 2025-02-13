@@ -12,11 +12,13 @@ RUN apt install -y \
     xfce4-terminal
 
 # Install thing to actually display desktop?
-RUN apt install dbus-x11
+RUN apt install -y dbus-x11
 # Install net-tools for debugging
 RUN apt install -y net-tools
 # Install rqt
-RUN apt install '~nros-jazzy-rqt*' -y
+RUN apt install -y '~nros-jazzy-rqt*'
+# Install nano for text editing
+RUN apt install nano
 # And clean up
 RUN apt clean && rm -rf /var/lib/apt/lists/*
 
