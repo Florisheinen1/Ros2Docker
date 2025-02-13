@@ -1,0 +1,37 @@
+FROM osrf/ros:jazzy-desktop
+
+# Set environment variables to avoid interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Update repositories
+RUN apt update
+# Install vnc server stuff
+RUN apt install -y \
+    tigervnc-standalone-server \
+    xfce4 \
+    xfce4-terminal
+
+# Install thing to actually display desktop?
+RUN apt install dbus-x11
+# Install net-tools for debugging
+RUN apt install -y net-tools
+# And clean up
+RUN apt clean && rm -rf /var/lib/apt/lists/*
+
+# Set the VNC password
+RUN mkdir -p /root/.vnc && \
+    echo "hackerman" | vncpasswd -f > /root/.vnc/passwd && \
+    chmod 600 /root/.vnc/passwd
+
+# Expose the VNC port
+EXPOSE 5901
+
+# Set up VNC user environment
+ENV USER=root
+ENV HOME=/root
+
+# Source ROS 2 setup script in .bashrc so ros commands are available
+RUN echo "source /opt/ros/jazzy/setup.bash" >> /root/.bashrc
+
+# Start the vnc server; and continue to bash
+ENTRYPOINT ["/bin/bash", "-c", "vncserver :1 -geometry 1920x1080 -depth 24 -localhost no && exec /bin/bash"]

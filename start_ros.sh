@@ -1,1 +1,6 @@
-docker run -it --rm -v ./workspace:/root/ros_ws osrf/ros:jazzy-desktop
+#!/bin/bash
+echo Building image...
+docker build -t asdfr-ros-vnc -f Dockerfile.ros_vnc .
+
+echo Running container...
+docker run -it -p 5901:5901 --rm -v ./workspace:/root/ros_ws asdfr-ros-vnc
