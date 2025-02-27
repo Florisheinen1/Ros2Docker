@@ -4,7 +4,7 @@ FROM osrf/ros:jazzy-desktop
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Update repositories
-RUN apt update
+RUN apt update --fix-missing
 # Install vnc server stuff
 RUN apt install -y \
     tigervnc-standalone-server \
@@ -13,12 +13,14 @@ RUN apt install -y \
 
 # Install thing to actually display desktop?
 RUN apt install -y dbus-x11
-# Install net-tools for debugging
-RUN apt install -y net-tools
 # Install rqt
 RUN apt install -y '~nros-jazzy-rqt*'
 # Install nano for text editing
 RUN apt install nano
+# Install wget for use in tutorial
+RUN apt install -y wget
+# Install net-tools for debugging
+RUN apt install -y net-tools
 # And clean up
 RUN apt clean && rm -rf /var/lib/apt/lists/*
 
