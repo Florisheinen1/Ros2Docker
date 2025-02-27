@@ -11,6 +11,9 @@ docker build --build-arg USER_ID="$USER_ID" --build-arg GROUP_ID="$GROUP_ID" -t 
 DEVICE_OPTION="--device=/dev/video0:/dev/video0"
 # DEVICE_OPTION=""
 
+# Preparing shared folder
+mkdir -p ./workspaces/
+
 echo Running container...
 docker run \
     $DEVICE_OPTION \
