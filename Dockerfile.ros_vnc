@@ -24,20 +24,44 @@ RUN apt install -y net-tools
 # And clean up
 RUN apt clean && rm -rf /var/lib/apt/lists/*
 
-# Set the VNC password
-RUN mkdir -p /root/.vnc && \
-    echo "hackerman" | vncpasswd -f > /root/.vnc/passwd && \
-    chmod 600 /root/.vnc/passwd
+# Create a non-root user with the same UID/GID as the host. Can be over-ridden to match your user
+# That way, files created in the shared folder can be modified from both within and outside of the container
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+
+# Ensure the group exists
+RUN if ! getent group $GROUP_ID > /dev/null; then \
+        groupadd --gid $GROUP_ID rosuser; \
+    else \
+        groupmod -n rosuser $(getent group $GROUP_ID | cut -d: -f1); \
+    fi
+
+# Ensure the user exists
+RUN if ! id -u $USER_ID > /dev/null 2>&1; then \
+        useradd --uid $USER_ID --gid $GROUP_ID --create-home --shell /bin/bash rosuser; \
+    else \
+        usermod -l rosuser -d /home/rosuser -m $(getent passwd $USER_ID | cut -d: -f1); \
+    fi
+
+# Ensure the home directory and VNC setup exist
+RUN mkdir -p /home/rosuser/.vnc && \
+    echo "hackerman" | vncpasswd -f > /home/rosuser/.vnc/passwd && \
+    chmod 600 /home/rosuser/.vnc/passwd && \
+    chown -R rosuser:rosuser /home/rosuser
+
+# Set environment variables for the new user
+ENV USER=rosuser
+ENV HOME=/home/rosuser
+
+# Source ROS 2 setup script in .bashrc
+RUN echo "source /opt/ros/jazzy/setup.bash" >> /home/rosuser/.bashrc
+
+# Switch to the new user
+USER rosuser
+WORKDIR /home/rosuser
 
 # Expose the VNC port
 EXPOSE 5901
-
-# Set up VNC user environment
-ENV USER=root
-ENV HOME=/root
-
-# Source ROS 2 setup script in .bashrc so ros commands are available
-RUN echo "source /opt/ros/jazzy/setup.bash" >> /root/.bashrc
 
 # Start the vnc server; and continue to bash
 ENTRYPOINT ["/bin/bash", "-c", "vncserver :1 -geometry 1920x1080 -depth 24 -localhost no && exec /bin/bash"]
