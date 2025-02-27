@@ -18,4 +18,4 @@ docker run \
     -p 5901:5901 \
     --rm \
     --user $USER_ID:$GROUP_ID \
-    -v ./workspace:/home/rosuser/ros_ws asdfr-ros-vnc
+    -v ./workspaces:/home/rosuser/workspaces asdfr-ros-vnc
