@@ -1,10 +1,11 @@
-# ASDfR 25
-Assignments for Advanced Software Development for Robotics, by group 25
+# Ros2Docker
+Not a conversion repo, but a docker image for Ros 2 with convenience installations and startup script.
 
 ## Installation
 By running the `start_ros.sh` script, you will build the dockerfile, based on the ros image, but with:
 - vnc server: For remote desktop visualization
 - nano: For text editing in terminal
+- wget: For downloading files in tutorial
 
 It will then immediately start the vnc server that will remain open as long as your interactive shell is alive.
 
