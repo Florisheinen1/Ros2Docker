@@ -21,6 +21,8 @@ RUN apt install nano
 RUN apt install -y wget
 # Install net-tools for debugging
 RUN apt install -y net-tools
+RUN apt update && apt install -y sudo
+RUN apt install -y netcat-traditional
 # And clean up
 RUN apt clean && rm -rf /var/lib/apt/lists/*
 
@@ -42,6 +44,11 @@ RUN if ! id -u $USER_ID > /dev/null 2>&1; then \
     else \
         usermod -l rosuser -d /home/rosuser -m $(getent passwd $USER_ID | cut -d: -f1); \
     fi
+
+RUN usermod -aG sudo rosuser
+RUN echo "rosuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+RUN echo "rosuser:hackerman" | chpasswd
 
 # Ensure the home directory and VNC setup exist
 RUN mkdir -p /home/rosuser/.vnc && \
