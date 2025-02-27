@@ -18,7 +18,7 @@ echo Running container...
 docker run \
     $DEVICE_OPTION \
     -it \
-    -p 5901:5901 \
+	--network host \
     --rm \
     --user $USER_ID:$GROUP_ID \
     -v ./workspaces:/home/rosuser/workspaces asdfr-ros-vnc
